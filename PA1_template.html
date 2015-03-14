@@ -268,7 +268,7 @@ par(mfcol=c(2,1))
 
 plot(uniqueDates, totalStepsPerDayNew, main=&quot;Histogram of steps taken each day&quot;, 
      xlab=&quot;Date (10/2012-11/2012)&quot;, ylab=&quot;Frequency&quot;, type=&quot;h&quot;, lwd=4, col=&quot;blue&quot;)</code></pre>
-<p><img src="PA1_template_files/figure-html/unnamed-chunk-9-1.png" /></p>
+<p><img src="./PA1_template_files/figure-html/unnamed-chunk-9-1.png" /></p>
 <p>Mean steps:</p>
 <pre class="r"><code>meanStepsPerDayNew &lt;- sapply(stepsSplitNew, mean)
 meanDataFrameNew &lt;- data.frame(date=uniqueDates, meanStepsPerDay=meanStepsPerDay, 
@@ -442,7 +442,7 @@ plot(uniqueIntervals, meanStepsPerWeekendInterval, type=&quot;l&quot;,
      main=&quot;Average number of steps per interval - weekends&quot;, 
      xlab=&quot;Interval&quot;, ylab=&quot;Average # of steps - weekends&quot;, 
      lwd=2, col=&quot;blue&quot;)</code></pre>
-<p><img src="PA1_template_files/figure-html/unnamed-chunk-13-1.png" /></p>
+<p><img src="./PA1_template_files/figure-html/unnamed-chunk-13-1.png" /></p>
 </div>
 
 

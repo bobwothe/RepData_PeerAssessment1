@@ -1,92 +1,47 @@
-<!DOCTYPE html>
+# Reproducible Research: Peer Assessment No. 1
+Bob Wothe  
+Friday, March 13, 2015  
+##LOADING AND PREPROCESSING THE DATA
 
-<html xmlns="http://www.w3.org/1999/xhtml">
-
-<head>
-
-<meta charset="utf-8">
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<meta name="generator" content="pandoc" />
-
-<meta name="author" content="Bob Wothe" />
+This code will load the data and also slightly transform the data for easier processing.
 
 
-<title>Reproducible Research: Peer Assessment No. 1</title>
+```r
+unzip("repdata-data-activity.zip")
+dat <- read.csv("activity.csv")
 
-<script src="PA1_template_files/jquery-1.11.0/jquery.min.js"></script>
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<link href="PA1_template_files/bootstrap-2.3.2/css/bootstrap.min.css" rel="stylesheet" />
-<link href="PA1_template_files/bootstrap-2.3.2/css/bootstrap-responsive.min.css" rel="stylesheet" />
-<script src="PA1_template_files/bootstrap-2.3.2/js/bootstrap.min.js"></script>
+dates <- strptime(dat$date, "%Y-%m-%d")
+dat$date <- dates
 
-<style type="text/css">code{white-space: pre;}</style>
-<link rel="stylesheet"
-      href="PA1_template_files/highlight/default.css"
-      type="text/css" />
-<script src="PA1_template_files/highlight/highlight.js"></script>
-<style type="text/css">
-  pre:not([class]) {
-    background-color: white;
-  }
-</style>
-<script type="text/javascript">
-if (window.hljs && document.readyState && document.readyState === "complete") {
-   window.setTimeout(function() {
-      hljs.initHighlighting();
-   }, 0);
-}
-</script>
+uniqueDates <- unique(dates)
+uniqueIntervals <- unique(dat$interval)
+```
+
+##WHAT IS THE MEAN TOTAL NUMBER OF STEPS PER DAY?
+
+1. This code will create a histogram of the total number of steps taken each day. 
 
 
+```r
+stepsSplit <- split(dat$steps, dates$yday)
+totalStepsPerDay <- sapply(stepsSplit, sum, na.rm=TRUE)
+plot(uniqueDates, totalStepsPerDay, main="Steps taken each day", 
+     xlab="Date (10/2012-11/2012)", ylab="Frequency", type="h", lwd=4, col="blue")
+```
 
-</head>
+![](./PA1_template_files/figure-html/unnamed-chunk-2-1.png) 
 
-<body>
-
-<style type = "text/css">
-.main-container {
-  max-width: 940px;
-  margin-left: auto;
-  margin-right: auto;
-}
-</style>
-<div class="container-fluid main-container">
+2.a. This code will calculate mean steps per day: 
 
 
-<div id="header">
-<h1 class="title">Reproducible Research: Peer Assessment No. 1</h1>
-<h4 class="author"><em>Bob Wothe</em></h4>
-<h4 class="date"><em>Friday, March 13, 2015</em></h4>
-</div>
+```r
+meanStepsPerDay <- sapply(stepsSplit, mean, na.rm=TRUE)
+meanDataFrame <- data.frame(date=uniqueDates, meanStepsPerDay=meanStepsPerDay, row.names=NULL)
+meanDataFrame
+```
 
-
-<div id="loading-and-preprocessing-the-data" class="section level2">
-<h2>LOADING AND PREPROCESSING THE DATA</h2>
-<p>This code will load the data and also slightly transform the data for easier processing.</p>
-<pre class="r"><code>unzip(&quot;repdata-data-activity.zip&quot;)
-dat &lt;- read.csv(&quot;activity.csv&quot;)
-
-dates &lt;- strptime(dat$date, &quot;%Y-%m-%d&quot;)
-dat$date &lt;- dates
-
-uniqueDates &lt;- unique(dates)
-uniqueIntervals &lt;- unique(dat$interval)</code></pre>
-</div>
-<div id="what-is-the-mean-total-number-of-steps-per-day" class="section level2">
-<h2>WHAT IS THE MEAN TOTAL NUMBER OF STEPS PER DAY?</h2>
-<ol style="list-style-type: decimal">
-<li>This code will create a histogram of the total number of steps taken each day.</li>
-</ol>
-<pre class="r"><code>stepsSplit &lt;- split(dat$steps, dates$yday)
-totalStepsPerDay &lt;- sapply(stepsSplit, sum, na.rm=TRUE)
-plot(uniqueDates, totalStepsPerDay, main=&quot;Steps taken each day&quot;, 
-     xlab=&quot;Date (10/2012-11/2012)&quot;, ylab=&quot;Frequency&quot;, type=&quot;h&quot;, lwd=4, col=&quot;blue&quot;)</code></pre>
-<p><img src="PA1_template_files/figure-html/unnamed-chunk-2-1.png" /></p>
-<p>2.a. This code will calculate mean steps per day:</p>
-<pre class="r"><code>meanStepsPerDay &lt;- sapply(stepsSplit, mean, na.rm=TRUE)
-meanDataFrame &lt;- data.frame(date=uniqueDates, meanStepsPerDay=meanStepsPerDay, row.names=NULL)
-meanDataFrame</code></pre>
-<pre><code>##          date meanStepsPerDay
+```
+##          date meanStepsPerDay
 ## 1  2012-10-01             NaN
 ## 2  2012-10-02       0.4375000
 ## 3  2012-10-03      39.4166667
@@ -147,12 +102,19 @@ meanDataFrame</code></pre>
 ## 58 2012-11-27      47.3819444
 ## 59 2012-11-28      35.3576389
 ## 60 2012-11-29      24.4687500
-## 61 2012-11-30             NaN</code></pre>
-<p>2.b. This code will calculate median steps per day:</p>
-<pre class="r"><code>medianStepsPerDay &lt;- sapply(stepsSplit, median, na.rm=TRUE)
-medianDataFrame &lt;- data.frame(date=uniqueDates, medianStepsPerDay=medianStepsPerDay, row.names=NULL)
-medianDataFrame</code></pre>
-<pre><code>##          date medianStepsPerDay
+## 61 2012-11-30             NaN
+```
+
+2.b. This code will calculate median steps per day:
+
+```r
+medianStepsPerDay <- sapply(stepsSplit, median, na.rm=TRUE)
+medianDataFrame <- data.frame(date=uniqueDates, medianStepsPerDay=medianStepsPerDay, row.names=NULL)
+medianDataFrame
+```
+
+```
+##          date medianStepsPerDay
 ## 1  2012-10-01                NA
 ## 2  2012-10-02                 0
 ## 3  2012-10-03                 0
@@ -213,68 +175,101 @@ medianDataFrame</code></pre>
 ## 58 2012-11-27                 0
 ## 59 2012-11-28                 0
 ## 60 2012-11-29                 0
-## 61 2012-11-30                NA</code></pre>
-</div>
-<div id="what-is-the-average-daily-activity-pattern" class="section level2">
-<h2>WHAT IS THE AVERAGE DAILY ACTIVITY PATTERN?</h2>
-<ol style="list-style-type: decimal">
-<li>This code will create a time series plot (i.e. type = “l”) of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all days (y-axis)</li>
-</ol>
-<pre class="r"><code>intervalSplit &lt;- split(dat$steps, dat$interval)
-averageStepsPerInterval &lt;- sapply(intervalSplit, mean, na.rm=TRUE)
-plot(uniqueIntervals, averageStepsPerInterval, type=&quot;l&quot;,
-     main=&quot;Average number of steps per interval across all days&quot;, 
-     xlab=&quot;Interval&quot;, ylab=&quot;Average # of steps across all days&quot;, 
-     lwd=2, col=&quot;blue&quot;)
-maxIntervalDays &lt;- max(averageStepsPerInterval, na.rm=TRUE)
-maxIndex &lt;- as.numeric(which(averageStepsPerInterval == maxIntervalDays))
-maxInterval &lt;- uniqueIntervals[maxIndex]
-abline(v=maxInterval, col=&quot;red&quot;, lwd=3)</code></pre>
-<p><img src="PA1_template_files/figure-html/unnamed-chunk-5-1.png" /></p>
-<ol start="2" style="list-style-type: decimal">
-<li>This codw will return the 5-minute interval, on average across all the days in the dataset, that contains the maximum number of steps:</li>
-</ol>
-<pre class="r"><code>maxInterval</code></pre>
-<pre><code>## [1] 835</code></pre>
-</div>
-<div id="inputting-missing-values" class="section level2">
-<h2>INPUTTING MISSING VALUES</h2>
-<ol style="list-style-type: decimal">
-<li>This code will calculate and report the total number of missing values in the dataset (i.e. the total number of rows with NAs)</li>
-</ol>
-<pre class="r"><code>completeRowsBool &lt;- complete.cases(dat$steps)
-numNA &lt;- sum(as.numeric(!completeRowsBool))
-numNA</code></pre>
-<pre><code>## [1] 2304</code></pre>
-<p>2/3. This code will fill in all of the missing values in the dataset using the mean for that day and create a new dataset that is equal to the original dataset but with the missing data filled in.</p>
-<pre class="r"><code>meanStepsPerDay[is.nan(meanStepsPerDay)] &lt;- 0
+## 61 2012-11-30                NA
+```
 
-meanColumn &lt;- rep(meanStepsPerDay, 288)
+##WHAT IS THE AVERAGE DAILY ACTIVITY PATTERN?
 
-rawSteps &lt;- dat$steps
+1. This code will create a time series plot (i.e. type = "l") of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all days (y-axis)
 
-stepsNA &lt;- is.na(rawSteps)
 
-rawSteps[stepsNA] &lt;- meanColumn[stepsNA]
+```r
+intervalSplit <- split(dat$steps, dat$interval)
+averageStepsPerInterval <- sapply(intervalSplit, mean, na.rm=TRUE)
+plot(uniqueIntervals, averageStepsPerInterval, type="l",
+     main="Average number of steps per interval across all days", 
+     xlab="Interval", ylab="Average # of steps across all days", 
+     lwd=2, col="blue")
+maxIntervalDays <- max(averageStepsPerInterval, na.rm=TRUE)
+maxIndex <- as.numeric(which(averageStepsPerInterval == maxIntervalDays))
+maxInterval <- uniqueIntervals[maxIndex]
+abline(v=maxInterval, col="red", lwd=3)
+```
 
-datNew &lt;- dat
-datNew$steps &lt;- rawSteps</code></pre>
-<p>This histogram will show the total number of steps taken each day and Calculate and report the mean and median total number of steps taken per day. Do these values differ from the estimates from the first part of the assignment? What is the impact of imputing missing data on the estimates of the total daily number of steps?</p>
-<pre class="r"><code>stepsSplitNew &lt;- split(datNew$steps, dates$yday)
+![](./PA1_template_files/figure-html/unnamed-chunk-5-1.png) 
 
-totalStepsPerDayNew &lt;- sapply(stepsSplitNew, sum)
+2. This codw will return the 5-minute interval, on average across all the days in the dataset, that contains the maximum number of steps:
+
+
+```r
+maxInterval
+```
+
+```
+## [1] 835
+```
+
+##INPUTTING MISSING VALUES
+
+1. This code will calculate and report the total number of missing values in the dataset (i.e. the total number of rows with NAs)
+
+
+```r
+completeRowsBool <- complete.cases(dat$steps)
+numNA <- sum(as.numeric(!completeRowsBool))
+numNA
+```
+
+```
+## [1] 2304
+```
+
+2/3. This code will fill in all of the missing values in the dataset using the mean for that day and create a new dataset that is equal to the original dataset but with the missing data filled in.
+
+
+```r
+meanStepsPerDay[is.nan(meanStepsPerDay)] <- 0
+
+meanColumn <- rep(meanStepsPerDay, 288)
+
+rawSteps <- dat$steps
+
+stepsNA <- is.na(rawSteps)
+
+rawSteps[stepsNA] <- meanColumn[stepsNA]
+
+datNew <- dat
+datNew$steps <- rawSteps
+```
+
+This histogram will show the total number of steps taken each day and Calculate and report the mean and median total number of steps taken per day. Do these values differ from the estimates from the first part of the assignment? What is the impact of imputing missing data on the estimates of the total daily number of steps?
+
+
+```r
+stepsSplitNew <- split(datNew$steps, dates$yday)
+
+totalStepsPerDayNew <- sapply(stepsSplitNew, sum)
 
 par(mfcol=c(2,1))
 
-plot(uniqueDates, totalStepsPerDayNew, main=&quot;Histogram of steps taken each day&quot;, 
-     xlab=&quot;Date (10/2012-11/2012)&quot;, ylab=&quot;Frequency&quot;, type=&quot;h&quot;, lwd=4, col=&quot;blue&quot;)</code></pre>
-<p><img src="PA1_template_files/figure-html/unnamed-chunk-9-1.png" /></p>
-<p>Mean steps:</p>
-<pre class="r"><code>meanStepsPerDayNew &lt;- sapply(stepsSplitNew, mean)
-meanDataFrameNew &lt;- data.frame(date=uniqueDates, meanStepsPerDay=meanStepsPerDay, 
+plot(uniqueDates, totalStepsPerDayNew, main="Histogram of steps taken each day", 
+     xlab="Date (10/2012-11/2012)", ylab="Frequency", type="h", lwd=4, col="blue")
+```
+
+![](./PA1_template_files/figure-html/unnamed-chunk-9-1.png) 
+
+Mean steps:
+
+
+```r
+meanStepsPerDayNew <- sapply(stepsSplitNew, mean)
+meanDataFrameNew <- data.frame(date=uniqueDates, meanStepsPerDay=meanStepsPerDay, 
                                meanStepsPerDayNew=meanStepsPerDayNew, row.names=NULL)
-meanDataFrameNew</code></pre>
-<pre><code>##          date meanStepsPerDay meanStepsPerDayNew
+meanDataFrameNew
+```
+
+```
+##          date meanStepsPerDay meanStepsPerDayNew
 ## 1  2012-10-01       0.0000000         32.3355276
 ## 2  2012-10-02       0.4375000          0.4375000
 ## 3  2012-10-03      39.4166667         39.4166667
@@ -335,13 +330,21 @@ meanDataFrameNew</code></pre>
 ## 58 2012-11-27      47.3819444         47.3819444
 ## 59 2012-11-28      35.3576389         35.3576389
 ## 60 2012-11-29      24.4687500         24.4687500
-## 61 2012-11-30       0.0000000         32.2280213</code></pre>
-<p>Median steps:</p>
-<pre class="r"><code>medianStepsPerDayNew &lt;- sapply(stepsSplitNew, median)
-medianDataFrameNew &lt;- data.frame(date=uniqueDates, medianStepsPerDay=medianStepsPerDay, 
+## 61 2012-11-30       0.0000000         32.2280213
+```
+
+Median steps:
+
+
+```r
+medianStepsPerDayNew <- sapply(stepsSplitNew, median)
+medianDataFrameNew <- data.frame(date=uniqueDates, medianStepsPerDay=medianStepsPerDay, 
                                  medianStepsPerDayNew=medianStepsPerDayNew, row.names=NULL)
-medianDataFrameNew</code></pre>
-<pre><code>##          date medianStepsPerDay medianStepsPerDayNew
+medianDataFrameNew
+```
+
+```
+##          date medianStepsPerDay medianStepsPerDayNew
 ## 1  2012-10-01                NA             36.09375
 ## 2  2012-10-02                 0              0.00000
 ## 3  2012-10-03                 0              0.00000
@@ -402,70 +405,52 @@ medianDataFrameNew</code></pre>
 ## 58 2012-11-27                 0              0.00000
 ## 59 2012-11-28                 0              0.00000
 ## 60 2012-11-29                 0              0.00000
-## 61 2012-11-30                NA             35.93576</code></pre>
-<p>The impact of the missing data is minimal; this is likely due to an already representative sample being established.</p>
-</div>
-<div id="are-there-differences-in-activity-patterns-between-weekdays-and-weekends" class="section level2">
-<h2>ARE THERE DIFFERENCES IN ACTIVITY PATTERNS BETWEEN WEEKDAYS AND WEEKENDS?</h2>
-<ol style="list-style-type: decimal">
-<li>This code will create a new factor variable in the dataset with two levels - “weekday” and “weekend” indicating whether a given date is a weekday or weekend day.</li>
-</ol>
-<pre class="r"><code>wdays &lt;- dates$wday
+## 61 2012-11-30                NA             35.93576
+```
 
-classifywday &lt;- rep(0, 17568)
+The impact of the missing data is minimal; this is likely due to an already representative sample being established.
 
-classifywday[wdays &gt;= 1 &amp; wdays &lt;= 5] &lt;- 1
+##ARE THERE DIFFERENCES IN ACTIVITY PATTERNS BETWEEN WEEKDAYS AND WEEKENDS?
 
-classifywday[wdays == 6 | wdays == 0] &lt;- 2
+1. This code will create a new factor variable in the dataset with two levels - "weekday" and "weekend" indicating whether a given date is a weekday or weekend day.
 
-daysFactor &lt;- factor(classifywday, levels=c(1,2), labels=c(&quot;Weekdays&quot;, &quot;Weekends&quot;))
 
-datNew$typeOfDay &lt;- daysFactor
+```r
+wdays <- dates$wday
 
-datWeekdays &lt;- datNew[datNew$typeOfDay == &quot;Weekdays&quot;, ]
-datWeekends &lt;- datNew[datNew$typeOfDay == &quot;Weekends&quot;, ]</code></pre>
-<ol start="2" style="list-style-type: decimal">
-<li>This code will create two panel plots containing a time series plot (i.e. type = “l”) of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all weekday days and weekend days (y-axis).</li>
-</ol>
-<pre class="r"><code>datSplitWeekdays &lt;- split(datWeekdays$steps, datWeekdays$interval)
-datSplitWeekends &lt;- split(datWeekends$steps, datWeekends$interval)
+classifywday <- rep(0, 17568)
 
-meanStepsPerWeekdayInterval &lt;- sapply(datSplitWeekdays, mean)
-meanStepsPerWeekendInterval &lt;- sapply(datSplitWeekends, mean)
+classifywday[wdays >= 1 & wdays <= 5] <- 1
+
+classifywday[wdays == 6 | wdays == 0] <- 2
+
+daysFactor <- factor(classifywday, levels=c(1,2), labels=c("Weekdays", "Weekends"))
+
+datNew$typeOfDay <- daysFactor
+
+datWeekdays <- datNew[datNew$typeOfDay == "Weekdays", ]
+datWeekends <- datNew[datNew$typeOfDay == "Weekends", ]
+```
+
+2. This code will create two panel plots containing a time series plot (i.e. type = "l") of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all weekday days and weekend days (y-axis). 
+
+
+```r
+datSplitWeekdays <- split(datWeekdays$steps, datWeekdays$interval)
+datSplitWeekends <- split(datWeekends$steps, datWeekends$interval)
+
+meanStepsPerWeekdayInterval <- sapply(datSplitWeekdays, mean)
+meanStepsPerWeekendInterval <- sapply(datSplitWeekends, mean)
 
 par(mfcol=c(2,1))
-plot(uniqueIntervals, meanStepsPerWeekdayInterval, type=&quot;l&quot;,
-     main=&quot;Average number of steps per interval - weekdays&quot;, 
-     xlab=&quot;Interval&quot;, ylab=&quot;Average # of steps - weekdays&quot;, 
-     lwd=2, col=&quot;blue&quot;)
-plot(uniqueIntervals, meanStepsPerWeekendInterval, type=&quot;l&quot;,
-     main=&quot;Average number of steps per interval - weekends&quot;, 
-     xlab=&quot;Interval&quot;, ylab=&quot;Average # of steps - weekends&quot;, 
-     lwd=2, col=&quot;blue&quot;)</code></pre>
-<p><img src="PA1_template_files/figure-html/unnamed-chunk-13-1.png" /></p>
-</div>
+plot(uniqueIntervals, meanStepsPerWeekdayInterval, type="l",
+     main="Average number of steps per interval - weekdays", 
+     xlab="Interval", ylab="Average # of steps - weekdays", 
+     lwd=2, col="blue")
+plot(uniqueIntervals, meanStepsPerWeekendInterval, type="l",
+     main="Average number of steps per interval - weekends", 
+     xlab="Interval", ylab="Average # of steps - weekends", 
+     lwd=2, col="blue")
+```
 
-
-</div>
-
-<script>
-
-// add bootstrap table styles to pandoc tables
-$(document).ready(function () {
-  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
-});
-
-</script>
-
-<!-- dynamically load mathjax for compatibility with self-contained -->
-<script>
-  (function () {
-    var script = document.createElement("script");
-    script.type = "text/javascript";
-    script.src  = "https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
-    document.getElementsByTagName("head")[0].appendChild(script);
-  })();
-</script>
-
-</body>
-</html>
+![](./PA1_template_files/figure-html/unnamed-chunk-13-1.png) 

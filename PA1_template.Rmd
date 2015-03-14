@@ -4,6 +4,7 @@ author: "Bob Wothe"
 date: "Friday, March 13, 2015"
 output:
   html_document:
+    keep_md: yes
     self_contained: no
 ---
 ##LOADING AND PREPROCESSING THE DATA
